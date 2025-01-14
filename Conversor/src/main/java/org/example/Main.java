@@ -1,10 +1,12 @@
+package org.example;
+
 import java.io.File;
 import java.util.Scanner;
 
 public class Main {
     private static File selectedFolder;
     private static File selectedFile;
-    private static DataStructure data = new DataStructure();
+    private static final DataStructure data = new DataStructure();
 
     public static void main(String[] args) {
         final String rojoBrillante = "\u001B[91m";
@@ -28,7 +30,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            showMenu(sc);
+            showMenu();
             int option = getOption(sc);
 
             switch (option) {
@@ -42,11 +44,11 @@ public class Main {
                     convertTo(sc);
                     break;
                 case 4:
-                    System.out.println("");
+                    System.out.println(" ");
                     System.out.println("\u001B[92m╔═════════════════════════════════════════╗");
                     System.out.println("║       ¡ SALIENDO DEL CONVERSOR !        ║");
                     System.out.println("║═════════════════════════════════════════║\033[0m");
-                    System.out.println("");
+                    System.out.println(" ");
                     sc.close();
                     return;
                 default:
@@ -56,7 +58,7 @@ public class Main {
     }
 
     // Muestra el menú
-    private static void showMenu(Scanner sc) {
+    private static void showMenu() {
         final String azulBrillante = "\u001B[94m";
         System.out.println("\n" + azulBrillante + "╔═════════════════════════════════════════╗");
         System.out.println("║              MENÚ PRINCIPAL             ║");
@@ -85,6 +87,22 @@ public class Main {
         }
     }
 
+    // Obtiene la opción seleccionada por el usuario (entre 1 y 3)
+    private static int obtenerOpcionHastaTres(Scanner sc) {
+        while (true) {
+            try {
+                int opcion = Integer.parseInt(sc.nextLine());
+                if (opcion >= 1 && opcion <= 3) {
+                    return opcion;
+                } else {
+                    System.out.println("Opción fuera de rango. Elige un número entre 1 y 3.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("ERROR: Debes ingresar un número entero válido.");
+            }
+        }
+    }
+
     // Selecciona una carpeta
     private static void selectFolder(Scanner sc) {
         System.out.print("\nIntroduce la ruta de la carpeta: ");
@@ -106,6 +124,7 @@ public class Main {
             } else {
                 System.out.println("La carpeta está vacía o no se pudo acceder a los archivos.");
             }
+            System.out.println("\u001B[93m╚═════════════════════════════════════════════════════╝");
 
             // Agregar mensaje para presionar Enter
             System.out.print("\nPresiona Enter para continuar...");
@@ -116,7 +135,7 @@ public class Main {
     }
 
 
-    // Lee un archivo dentro de la carpeta seleccionada
+    // Lee un archivo dentro de la carpeta seleccionada (selectedFolder)
     private static void readFile(Scanner sc) {
         if (selectedFolder == null) {
             System.out.println("Primero selecciona una carpeta.");
@@ -134,7 +153,7 @@ public class Main {
                     data.readCSV(selectedFile);
                     break;
                 case "json":
-                    //data.readJSON(selectedFile);
+                    data.readJSON(selectedFile);
                     break;
                 case "xml":
                     data.readXML(selectedFile);
@@ -160,11 +179,12 @@ public class Main {
         System.out.println("1. CSV");
         System.out.println("2. JSON");
         System.out.println("3. XML");
-        int formatOption = getOption(sc);
+        int formatOption = obtenerOpcionHastaTres(sc);
 
         System.out.print("Introduce el nombre del archivo de salida: ");
         String outputFileName = sc.nextLine();
 
+        //Exportador de archivos
         switch (formatOption) {
             case 1:
                 FileExporter.writeCSV(data, outputFileName);
